@@ -5,7 +5,7 @@ go 1.25.0
 require (
 	github.com/acp/node-agent v0.0.0
 	github.com/miekg/dns v1.1.72
-	github.com/sagernet/sing v0.8.12-0.20260726145744-ef2df370afca
+	github.com/sagernet/sing v0.8.13
 	go4.org/netipx v0.0.0-20231129151722-fdeea329fbba
 	golang.org/x/mod v0.38.0
 	google.golang.org/protobuf v1.36.11

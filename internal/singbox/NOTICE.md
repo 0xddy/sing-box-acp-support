@@ -4,9 +4,9 @@ The Go sources in this directory are derived from sing-box and retain the
 original package structure under an internal module path.
 
 - Project: `github.com/SagerNet/sing-box`
-- Source tag: `v1.13.16`
-- Upstream commit: `17ec3c71af8ca946dc50bf0d927c39fc77322aec`
-- ACP fork commit: `bf3f82a697c888bdaf41b927c3e72728e4e19909`
+- Source tag: `v1.13.19`
+- Upstream commit: `b5ebaa1fc0f2b94256180b95468e73ef53caa27d`
+- ACP fork commit: `bc3b80fcf35f2d41f743c42805898a25b322c73e`
 - Imported packages: `option`, `constant`, `constant/goos`,
   `common/badversion`, `experimental/locale`, and
   `experimental/deprecated`
