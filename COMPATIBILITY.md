@@ -6,11 +6,11 @@ runtime or sing-box protocol constructors.
 
 Compatibility baseline:
 
-- support release tag: `v1.13.19-acp.1`
+- support release tag: `v1.13.19-acp.2`
 - embedded sing-box configuration source tag: `v1.13.19`
 - upstream sing-box source commit: `b5ebaa1fc0f2b94256180b95468e73ef53caa27d`
 - sing-box-acp commit: `bc3b80fcf35f2d41f743c42805898a25b322c73e`
-- node-agent commit: `b263c25c4766861984902c12438907899628d9cb`
+- node-agent commit: `b7907ed95ea63c048761063bde2023a7386aee33`
 - sing-quic upstream commit: `d83826c306d7c008cafb3fd6d8ee07cbcfd656ed`
 - sing-quic pseudo-version: `v0.6.4-0.20260803041914-d83826c306d7`
 - node-agent API module: `github.com/acp/node-agent`

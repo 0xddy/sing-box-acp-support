@@ -3,7 +3,7 @@ module github.com/0xddy/sing-box-acp-support/compat
 go 1.25.0
 
 require (
-	github.com/0xddy/sing-box-acp-support v1.13.19-acp.1
+	github.com/0xddy/sing-box-acp-support v1.13.19-acp.2
 	github.com/acp/node-agent v0.0.0
 )
 

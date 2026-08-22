@@ -121,6 +121,12 @@ func (hysteria2SalamanderAdapter) Build(node topology.NodeInstance, users []topo
 	if cfg.ListenPort == 0 || cfg.TLS.CertificatePEM == "" || cfg.TLS.PrivateKeyPEM == "" {
 		return BuildResult{}, fmt.Errorf("node %s hysteria2 provider config is incomplete", node.NodeID)
 	}
+	if cfg.UpMbps < 0 || cfg.DownMbps < 0 {
+		return BuildResult{}, fmt.Errorf(
+			"node %s hysteria2 bandwidth must not be negative: up_mbps=%d down_mbps=%d",
+			node.NodeID, cfg.UpMbps, cfg.DownMbps,
+		)
+	}
 	switch cfg.Obfs.Type {
 	case "salamander":
 		if cfg.Obfs.Password == "" {
@@ -194,8 +200,13 @@ func (hysteria2SalamanderAdapter) Build(node topology.NodeInstance, users []topo
 			}
 		}
 	}
+	// sing-box maps these to SendBPS and ReceiveBPS independently and falls back
+	// to BBR per direction, so a configured direction must never be dropped
+	// because the other one is unset.
 	if cfg.UpMbps > 0 {
 		inbound["up_mbps"] = cfg.UpMbps
+	}
+	if cfg.DownMbps > 0 {
 		inbound["down_mbps"] = cfg.DownMbps
 	}
 	return BuildResult{Inbound: inbound, Tag: tag, Protocol: "hysteria2"}, nil
