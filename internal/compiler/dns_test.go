@@ -45,7 +45,7 @@ func TestCompileDNSUsesEncryptedDefaultServer(t *testing.T) {
 	}
 }
 
-func TestCompileDNSRuleUsesUint32RewriteTTLAndOmitsUnsupportedTimeout(t *testing.T) {
+func TestCompileDNSRuleUsesUint32RewriteTTLAndTimeout(t *testing.T) {
 	compiled, err := compileDNSRule(topology.DNSRule{
 		Action:     "route",
 		RewriteTTL: " 3600 ",
@@ -62,8 +62,47 @@ func TestCompileDNSRuleUsesUint32RewriteTTLAndOmitsUnsupportedTimeout(t *testing
 	if rewriteTTL != 3600 {
 		t.Fatalf("rewrite_ttl = %d, want 3600", rewriteTTL)
 	}
-	if _, exists := compiled["timeout"]; exists {
-		t.Fatalf("unsupported timeout was compiled: %+v", compiled)
+	if timeout, exists := compiled["timeout"]; !exists || timeout != "5s" {
+		t.Fatalf("timeout = %#v, want 5s", timeout)
+	}
+}
+
+func TestCompileDNSRuleTimeoutActions(t *testing.T) {
+	tests := []struct {
+		action    string
+		supported bool
+	}{
+		{action: "route", supported: true},
+		{action: "evaluate", supported: true},
+		{action: "route-options", supported: true},
+		{action: "respond"},
+		{action: "reject"},
+		{action: "predefined"},
+	}
+
+	for _, test := range tests {
+		t.Run(test.action, func(t *testing.T) {
+			compiled, err := compileDNSRule(topology.DNSRule{
+				Action:  test.action,
+				Timeout: "5s",
+			})
+			if test.supported {
+				if err != nil {
+					t.Fatalf("compile DNS rule: %v", err)
+				}
+				if timeout, exists := compiled["timeout"]; !exists || timeout != "5s" {
+					t.Fatalf("timeout = %#v, want 5s", timeout)
+				}
+				return
+			}
+			if err == nil {
+				t.Fatalf("expected unsupported timeout error, got rule %+v", compiled)
+			}
+			wantError := "dns rule action \"" + test.action + "\" does not support timeout"
+			if err.Error() != wantError {
+				t.Fatalf("compile DNS rule error = %q, want %q", err, wantError)
+			}
+		})
 	}
 }
 

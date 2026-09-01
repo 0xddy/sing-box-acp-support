@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/0xddy/sing-box-acp-support/internal/outboundvalidate"
+	C "github.com/0xddy/sing-box-acp-support/internal/singbox/constant"
 	"github.com/0xddy/sing-box-acp-support/internal/topology"
 )
 
@@ -68,6 +69,9 @@ func compileOutbound(outbound topology.Outbound) (map[string]any, error) {
 	if fields == nil {
 		return nil, fmt.Errorf("outbound %q options must be a JSON object", outbound.Tag)
 	}
+	if outbound.Type == C.TypeHysteria2 && !hasJSONField(fields, "disable_chrome_parrot") {
+		fields["disable_chrome_parrot"] = json.RawMessage("true")
+	}
 
 	entry := make(map[string]any, len(fields)+2)
 	entry["type"] = outbound.Type
@@ -87,4 +91,13 @@ func compileOutbound(outbound topology.Outbound) (map[string]any, error) {
 		return nil, fmt.Errorf("invalid %s outbound %q options: %w", outbound.Type, outbound.Tag, err)
 	}
 	return entry, nil
+}
+
+func hasJSONField(fields map[string]json.RawMessage, name string) bool {
+	for field := range fields {
+		if strings.EqualFold(field, name) {
+			return true
+		}
+	}
+	return false
 }

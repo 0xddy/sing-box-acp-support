@@ -134,6 +134,34 @@ func snapshotCases(t *testing.T) []struct {
 			}},
 			Outbounds: []*acpv1.OutboundConfig{{Type: "direct", Tag: "direct"}},
 		}},
+		{name: "dns rule timeout", snapshot: &acpv1.TopologySnapshot{
+			MachineId: "machine-1",
+			Outbounds: []*acpv1.OutboundConfig{{Type: "direct", Tag: "direct"}},
+			Dns: &acpv1.DNSConfig{
+				Servers: []*acpv1.DNSServer{{Type: "https", Tag: "default-dns", Server: "1.1.1.1"}},
+				Final:   "default-dns",
+				Rules: []*acpv1.DNSRule{{
+					DomainSuffix: []string{"example.com"}, Action: "route", Server: "default-dns", Timeout: "5s",
+				}},
+			},
+		}},
+		{name: "unsupported dns rule timeout action", snapshot: &acpv1.TopologySnapshot{
+			MachineId: "machine-1",
+			Outbounds: []*acpv1.OutboundConfig{{Type: "direct", Tag: "direct"}},
+			Dns: &acpv1.DNSConfig{
+				Servers: []*acpv1.DNSServer{{Type: "https", Tag: "default-dns", Server: "1.1.1.1"}},
+				Final:   "default-dns",
+				Rules:   []*acpv1.DNSRule{{Action: "respond", Timeout: "5s"}},
+			},
+		}},
+		{name: "hysteria2 outbound chrome parrot compatibility", snapshot: &acpv1.TopologySnapshot{
+			MachineId: "machine-1",
+			Outbounds: []*acpv1.OutboundConfig{{
+				Type: "hysteria2", Tag: "hy2-out",
+				OptionsJson: []byte(`{"server":"127.0.0.1","server_port":443,"password":"secret","tls":{"enabled":true,"server_name":"example.com","insecure":true}}`),
+			}},
+			Route: &acpv1.RouteConfig{Final: "hy2-out"},
+		}},
 		{name: "remote rule-set http client", snapshot: &acpv1.TopologySnapshot{
 			MachineId: "machine-1",
 			Outbounds: []*acpv1.OutboundConfig{{Type: "direct", Tag: "direct"}},

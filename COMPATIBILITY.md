@@ -9,8 +9,8 @@ Compatibility baseline:
 - planned support release tag: `v1.14.0-acp.1`
 - embedded sing-box configuration source tag: `v1.14.0`
 - upstream sing-box source commit: `0b8995879f29a9b98ee027bc17b75e101445b238`
-- sing-box-acp commit: `fdd1af6da5f0763e10df5a5301d7e6150a4a9bb2`
-- node-agent commit: `a8ffb9faa85787cb302653c9685ad98b00ba4b85`
+- sing-box-acp commit: `e7ba3f961942ccf63e7173009498b16308eb93fc`
+- node-agent commit: `b77f8129bd48e67684498c26aaa2309e13f42ffb`
 - sing-quic upstream commit: `4ab2eceaac81e073f53b22ec72ff56aaea89a3d1`
 - sing-quic version: `v0.7.0-beta.4`
 - minimum Go version: `1.25.5`
