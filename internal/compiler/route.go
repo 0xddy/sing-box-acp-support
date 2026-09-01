@@ -222,7 +222,9 @@ func compileRouteRuleSet(ruleSet topology.RouteRuleSet) (map[string]any, error) 
 		compiled["url"] = ruleSet.URL
 	}
 	if ruleSet.DownloadDetour != "" {
-		compiled["download_detour"] = ruleSet.DownloadDetour
+		compiled["http_client"] = map[string]any{
+			"detour": ruleSet.DownloadDetour,
+		}
 	}
 	if ruleSet.UpdateInterval != "" {
 		compiled["update_interval"] = ruleSet.UpdateInterval

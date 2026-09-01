@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	C "github.com/0xddy/sing-box-acp-support/internal/singbox/constant"
 	"github.com/0xddy/sing-box-acp-support/internal/topology"
 )
 
@@ -97,6 +98,14 @@ func compileDNSRule(rule topology.DNSRule) (map[string]any, error) {
 	applyStringList(compiled, "extra", rule.Extra)
 	if rule.DisableCache {
 		compiled["disable_cache"] = rule.DisableCache
+	}
+	if rule.Timeout != "" {
+		switch rule.Action {
+		case C.RuleActionTypeRoute, C.RuleActionTypeEvaluate, C.RuleActionTypeRouteOptions:
+			compiled["timeout"] = rule.Timeout
+		default:
+			return nil, fmt.Errorf("dns rule action %q does not support timeout", rule.Action)
+		}
 	}
 	if rewriteTTL := strings.TrimSpace(rule.RewriteTTL); rewriteTTL != "" {
 		value, err := strconv.ParseUint(rewriteTTL, 10, 32)

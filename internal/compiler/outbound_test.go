@@ -124,6 +124,104 @@ func TestCompileOutboundPreservesRawOptions(t *testing.T) {
 	}
 }
 
+func TestCompileOutboundHysteria2ChromeParrotCompatibility(t *testing.T) {
+	tests := []struct {
+		name         string
+		outboundType string
+		options      string
+		wantPresent  bool
+		wantValue    bool
+	}{
+		{
+			name:         "missing defaults disabled",
+			outboundType: "hysteria2",
+			options:      `{}`,
+			wantPresent:  true,
+			wantValue:    true,
+		},
+		{
+			name:         "explicit false is preserved",
+			outboundType: "hysteria2",
+			options:      `{"disable_chrome_parrot":false}`,
+			wantPresent:  true,
+			wantValue:    false,
+		},
+		{
+			name:         "explicit true is preserved",
+			outboundType: "hysteria2",
+			options:      `{"disable_chrome_parrot":true}`,
+			wantPresent:  true,
+			wantValue:    true,
+		},
+		{
+			name:         "other outbound is unchanged",
+			outboundType: "direct",
+			options:      `{}`,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			entry, err := compileOutbound(topology.Outbound{
+				Type:    test.outboundType,
+				Tag:     "test",
+				Options: json.RawMessage(test.options),
+			})
+			if err != nil {
+				t.Fatalf("compile outbound: %v", err)
+			}
+
+			encoded, err := json.Marshal(entry)
+			if err != nil {
+				t.Fatalf("marshal compiled outbound: %v", err)
+			}
+			var decoded map[string]json.RawMessage
+			if err := json.Unmarshal(encoded, &decoded); err != nil {
+				t.Fatalf("decode compiled outbound: %v", err)
+			}
+			rawValue, present := decoded["disable_chrome_parrot"]
+			if present != test.wantPresent {
+				t.Fatalf("disable_chrome_parrot present = %v, want %v; outbound = %s", present, test.wantPresent, encoded)
+			}
+			if !present {
+				return
+			}
+			var value bool
+			if err := json.Unmarshal(rawValue, &value); err != nil {
+				t.Fatalf("decode disable_chrome_parrot: %v", err)
+			}
+			if value != test.wantValue {
+				t.Fatalf("disable_chrome_parrot = %v, want %v", value, test.wantValue)
+			}
+		})
+	}
+}
+
+func TestCompileOutboundPreservesCaseFoldedHysteria2ChromeParrotOption(t *testing.T) {
+	entry, err := compileOutbound(topology.Outbound{
+		Type:    "hysteria2",
+		Tag:     "test",
+		Options: json.RawMessage(`{"Disable_Chrome_Parrot":false}`),
+	})
+	if err != nil {
+		t.Fatalf("compile outbound: %v", err)
+	}
+	if _, exists := entry["disable_chrome_parrot"]; exists {
+		t.Fatalf("case-folded option was duplicated: %+v", entry)
+	}
+	rawValue, ok := entry["Disable_Chrome_Parrot"].(json.RawMessage)
+	if !ok {
+		t.Fatalf("case-folded option type = %T, want json.RawMessage", entry["Disable_Chrome_Parrot"])
+	}
+	var value bool
+	if err := json.Unmarshal(rawValue, &value); err != nil {
+		t.Fatalf("decode case-folded option: %v", err)
+	}
+	if value {
+		t.Fatal("case-folded explicit false was not preserved")
+	}
+}
+
 func TestDirectOutboundIsEmptyMatchesRuntimeDialerSemantics(t *testing.T) {
 	tests := []struct {
 		name    string

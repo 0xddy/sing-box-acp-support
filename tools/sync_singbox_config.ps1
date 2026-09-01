@@ -23,6 +23,7 @@ if (-not (Test-Path -LiteralPath (Join-Path $sourcePath "LICENSE"))) {
 }
 
 $packages = @(
+    "schema",
     "option",
     "constant",
     "constant\goos",
@@ -32,6 +33,7 @@ $packages = @(
 )
 
 $rewrites = [ordered]@{
+    "github.com/sagernet/sing-box/schema" = "github.com/0xddy/sing-box-acp-support/internal/singbox/schema"
     "github.com/sagernet/sing-box/constant/goos" = "github.com/0xddy/sing-box-acp-support/internal/singbox/constant/goos"
     "github.com/sagernet/sing-box/common/badversion" = "github.com/0xddy/sing-box-acp-support/internal/singbox/common/badversion"
     "github.com/sagernet/sing-box/experimental/deprecated" = "github.com/0xddy/sing-box-acp-support/internal/singbox/experimental/deprecated"
