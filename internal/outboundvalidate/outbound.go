@@ -49,6 +49,14 @@ func (r *optionsRegistry) CreateOptions(outboundType string) (any, bool) {
 	return create(), true
 }
 
+func (r *optionsRegistry) OptionTypes() []string {
+	types := make([]string, 0, len(registrations))
+	for _, item := range registrations {
+		types = append(types, item.outboundType)
+	}
+	return types
+}
+
 var registry = newOptionsRegistry()
 
 func validationContext() context.Context {
@@ -82,9 +90,11 @@ func DirectOutboundIsEmpty(optionsJSON []byte) (bool, error) {
 	if err != nil {
 		return false, fmt.Errorf("invalid Direct outbound options: %w", err)
 	}
-	options.UDPFragmentDefault = true
+	options.AbstractDialerOptions.UDPFragmentDefault = true
 	return reflect.DeepEqual(
 		options.DialerOptions,
-		option.DialerOptions{UDPFragmentDefault: true},
+		option.DialerOptions{
+			AbstractDialerOptions: option.AbstractDialerOptions{UDPFragmentDefault: true},
+		},
 	), nil
 }

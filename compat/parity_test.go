@@ -134,6 +134,17 @@ func snapshotCases(t *testing.T) []struct {
 			}},
 			Outbounds: []*acpv1.OutboundConfig{{Type: "direct", Tag: "direct"}},
 		}},
+		{name: "remote rule-set http client", snapshot: &acpv1.TopologySnapshot{
+			MachineId: "machine-1",
+			Outbounds: []*acpv1.OutboundConfig{{Type: "direct", Tag: "direct"}},
+			Route: &acpv1.RouteConfig{
+				Final: "direct",
+				RuleSets: []*acpv1.RouteRuleSet{{
+					Type: "remote", Tag: "remote-rules", Format: "binary",
+					Url: "https://example.com/rules.srs", DownloadDetour: "direct",
+				}},
+			},
+		}},
 		{name: "invalid route reference", snapshot: &acpv1.TopologySnapshot{
 			MachineId: "machine-1",
 			Outbounds: []*acpv1.OutboundConfig{{Type: "direct", Tag: "direct"}},

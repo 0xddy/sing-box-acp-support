@@ -6,13 +6,14 @@ runtime or sing-box protocol constructors.
 
 Compatibility baseline:
 
-- support release tag: `v1.13.19-acp.2`
-- embedded sing-box configuration source tag: `v1.13.19`
-- upstream sing-box source commit: `b5ebaa1fc0f2b94256180b95468e73ef53caa27d`
-- sing-box-acp commit: `bc3b80fcf35f2d41f743c42805898a25b322c73e`
-- node-agent commit: `b7907ed95ea63c048761063bde2023a7386aee33`
-- sing-quic upstream commit: `d83826c306d7c008cafb3fd6d8ee07cbcfd656ed`
-- sing-quic pseudo-version: `v0.6.4-0.20260803041914-d83826c306d7`
+- planned support release tag: `v1.14.0-acp.1`
+- embedded sing-box configuration source tag: `v1.14.0`
+- upstream sing-box source commit: `0b8995879f29a9b98ee027bc17b75e101445b238`
+- sing-box-acp commit: `fdd1af6da5f0763e10df5a5301d7e6150a4a9bb2`
+- node-agent commit: `a8ffb9faa85787cb302653c9685ad98b00ba4b85`
+- sing-quic upstream commit: `4ab2eceaac81e073f53b22ec72ff56aaea89a3d1`
+- sing-quic version: `v0.7.0-beta.4`
+- minimum Go version: `1.25.5`
 - node-agent API module: `github.com/acp/node-agent`
 - supported outbound types, in order: `direct`, `selector`, `urltest`,
   `shadowsocks`, `trojan`, `vless`, `hysteria2`
