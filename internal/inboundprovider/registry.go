@@ -66,6 +66,20 @@ func (vlessRealityVisionAdapter) Build(node topology.NodeInstance, users []topol
 	if cfg.ListenPort == 0 || cfg.TLS.Reality.PrivateKey == "" || len(cfg.TLS.Reality.ShortID) == 0 {
 		return BuildResult{}, fmt.Errorf("node %s vless provider config is incomplete", node.NodeID)
 	}
+	// This provider only describes REALITY listeners. Emitting the panel flags
+	// verbatim would turn a disabled flag into a plaintext VLESS listener that
+	// the agent still reports as applied, so reject it instead.
+	if !cfg.TLS.Enabled || !cfg.TLS.Reality.Enabled {
+		return BuildResult{}, fmt.Errorf(
+			"node %s vless provider requires tls.enabled and tls.reality.enabled: tls=%t reality=%t",
+			node.NodeID,
+			cfg.TLS.Enabled,
+			cfg.TLS.Reality.Enabled,
+		)
+	}
+	if cfg.TLS.Reality.Handshake.Server == "" || cfg.TLS.Reality.Handshake.ServerPort == 0 {
+		return BuildResult{}, fmt.Errorf("node %s vless provider requires a reality handshake server and port", node.NodeID)
+	}
 	tag := cfg.Tag
 	if tag == "" {
 		tag = node.NodeID
@@ -209,7 +223,7 @@ func (hysteria2SalamanderAdapter) Build(node topology.NodeInstance, users []topo
 	if cfg.DownMbps > 0 {
 		inbound["down_mbps"] = cfg.DownMbps
 	}
-	return BuildResult{Inbound: inbound, Tag: tag, Protocol: "hysteria2"}, nil
+	return BuildResult{Inbound: inbound, Tag: tag, Protocol: "hysteria2", Sniff: true}, nil
 }
 
 func userName(user topology.UserCredential) string {

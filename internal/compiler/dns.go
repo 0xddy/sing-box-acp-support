@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	C "github.com/0xddy/sing-box-acp-support/internal/singbox/constant"
+	"github.com/0xddy/sing-box-acp-support/internal/singbox/option"
 	"github.com/0xddy/sing-box-acp-support/internal/topology"
 )
 
@@ -19,13 +20,9 @@ func compileDNS(dns *topology.DNS) (map[string]any, error) {
 		return compiled, nil
 	}
 	if len(dns.Servers) > 0 {
-		servers := make([]map[string]any, 0, len(dns.Servers))
-		for _, server := range dns.Servers {
-			compiledServer, err := compileDNSServer(server)
-			if err != nil {
-				return nil, err
-			}
-			servers = append(servers, compiledServer)
+		servers, err := compileDNSServers(dns.Servers, dns.Final)
+		if err != nil {
+			return nil, err
 		}
 		compiled["servers"] = servers
 	}
@@ -48,13 +45,66 @@ func compileDNS(dns *topology.DNS) (map[string]any, error) {
 }
 
 func defaultDNSServers() []map[string]any {
-	return []map[string]any{
-		{
-			"type":   "https",
-			"tag":    "default-dns",
-			"server": "1.1.1.1",
-		},
+	return []map[string]any{defaultDNSServer("default-dns")}
+}
+
+func defaultDNSServer(tag string) map[string]any {
+	return map[string]any{
+		"type":   "https",
+		"tag":    tag,
+		"server": "1.1.1.1",
 	}
+}
+
+func compileDNSServers(servers []topology.DNSServer, final string) ([]map[string]any, error) {
+	compiled := make([]map[string]any, 0, len(servers))
+	tags := make(map[string]struct{}, len(servers))
+	var needsBootstrap []int
+	bootstrapTag := ""
+	for _, server := range servers {
+		entry, err := compileDNSServer(server)
+		if err != nil {
+			return nil, err
+		}
+		compiled = append(compiled, entry)
+		tags[server.Tag] = struct{}{}
+		// A detoured DNS server delegates its destination to the outbound.
+		// Adding a local resolver there could change the selected egress or
+		// introduce a cycle through that outbound's own domain resolver.
+		if server.Detour != "" {
+			continue
+		}
+		switch server.Type {
+		case C.DNSTypeUDP, C.DNSTypeTCP, C.DNSTypeTLS, C.DNSTypeHTTPS, C.DNSTypeQUIC:
+			if (option.DNSServerAddressOptions{Server: server.Server}).ServerIsDomain() {
+				needsBootstrap = append(needsBootstrap, len(compiled)-1)
+			} else if bootstrapTag == "" || server.Tag == final {
+				// A literal address without a detour has no DNS dependency, so
+				// it can safely bootstrap any of the hostname servers.
+				bootstrapTag = server.Tag
+			}
+		}
+	}
+	if len(needsBootstrap) == 0 {
+		return compiled, nil
+	}
+	if bootstrapTag == "" {
+		const baseTag = "__acp_dns_bootstrap"
+		bootstrapTag = baseTag
+		for suffix := 1; ; suffix++ {
+			if _, exists := tags[bootstrapTag]; !exists {
+				break
+			}
+			bootstrapTag = fmt.Sprintf("%s_%d", baseTag, suffix)
+		}
+		compiled = append(compiled, defaultDNSServer(bootstrapTag))
+	}
+	for _, index := range needsBootstrap {
+		// DNS transports require their own resolver even when route has a
+		// default_domain_resolver. Reuse one dependency for every hostname.
+		compiled[index]["domain_resolver"] = map[string]any{"server": bootstrapTag}
+	}
+	return compiled, nil
 }
 
 func compileDNSServer(server topology.DNSServer) (map[string]any, error) {
@@ -99,6 +149,13 @@ func compileDNSRule(rule topology.DNSRule) (map[string]any, error) {
 	if rule.DisableCache {
 		compiled["disable_cache"] = rule.DisableCache
 	}
+	if rewriteTTL := strings.TrimSpace(rule.RewriteTTL); rewriteTTL != "" {
+		value, err := strconv.ParseUint(rewriteTTL, 10, 32)
+		if err != nil {
+			return nil, fmt.Errorf("dns rule rewrite_ttl %q must be a uint32: %w", rule.RewriteTTL, err)
+		}
+		compiled["rewrite_ttl"] = uint32(value)
+	}
 	if rule.Timeout != "" {
 		switch rule.Action {
 		case C.RuleActionTypeRoute, C.RuleActionTypeEvaluate, C.RuleActionTypeRouteOptions:
@@ -106,13 +163,6 @@ func compileDNSRule(rule topology.DNSRule) (map[string]any, error) {
 		default:
 			return nil, fmt.Errorf("dns rule action %q does not support timeout", rule.Action)
 		}
-	}
-	if rewriteTTL := strings.TrimSpace(rule.RewriteTTL); rewriteTTL != "" {
-		value, err := strconv.ParseUint(rewriteTTL, 10, 32)
-		if err != nil {
-			return nil, fmt.Errorf("dns rule rewrite_ttl %q must be a uint32: %w", rule.RewriteTTL, err)
-		}
-		compiled["rewrite_ttl"] = uint32(value)
 	}
 	applyOptionalString(compiled, "client_subnet", rule.ClientSubnet)
 	return compiled, nil

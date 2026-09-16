@@ -43,7 +43,7 @@ func TestCompileVLESSRealityVisionProvider(t *testing.T) {
 		t.Fatalf("user=%+v", user)
 	}
 	rules := decoded["route"].(map[string]any)["rules"].([]any)
-	if rules[0].(map[string]any)["action"] != "sniff" {
+	if rules[0].(map[string]any)["action"] != "sniff" || rules[0].(map[string]any)["timeout"] != "300ms" {
 		t.Fatalf("rules=%+v", rules)
 	}
 }
@@ -62,6 +62,11 @@ func TestCompileHysteria2SalamanderProvider(t *testing.T) {
 	}
 	if inbound["users"].([]any)[0].(map[string]any)["password"] != "user-password" {
 		t.Fatalf("users=%+v", inbound["users"])
+	}
+	rules := decoded["route"].(map[string]any)["rules"].([]any)
+	rule := rules[0].(map[string]any)
+	if len(rules) != 1 || rule["action"] != "sniff" || rule["timeout"] != "300ms" || rule["inbound"].([]any)[0] != "node-hy2" {
+		t.Fatalf("Hysteria2 default sniff policy drifted: %+v", rules)
 	}
 }
 

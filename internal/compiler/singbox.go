@@ -11,6 +11,7 @@ import (
 type SingBoxConfig struct {
 	Log          map[string]any   `json:"log,omitempty"`
 	DNS          map[string]any   `json:"dns,omitempty"`
+	HTTPClients  []map[string]any `json:"http_clients,omitempty"`
 	Inbounds     []map[string]any `json:"inbounds"`
 	Outbounds    []map[string]any `json:"outbounds"`
 	Route        map[string]any   `json:"route,omitempty"`
@@ -47,6 +48,34 @@ func Compile(top topology.MachineTopology) ([]byte, error) {
 		return nil, err
 	}
 	route = prependRouteRules(route, sniffRouteRules(compiledNodes))
+	httpClients := []map[string]any(nil)
+	if needsDefaultRuleSetHTTPClient(top.Route) {
+		const clientTag = "__acp_rule_set_download"
+		client := map[string]any{"tag": clientTag}
+		defaultOutboundTag, _ := route["final"].(string)
+		defaultOutbound := outbounds[0]
+		if defaultOutboundTag != "" {
+			for _, outbound := range outbounds {
+				if outbound["tag"] == defaultOutboundTag {
+					defaultOutbound = outbound
+					break
+				}
+			}
+		}
+		if defaultOutbound["type"] == topology.OutboundTypeDirect {
+			// An empty Direct outbound cannot be used as a detour. Its dialer
+			// options can instead be used directly by the shared HTTP client.
+			for key, value := range defaultOutbound {
+				if key != "type" && key != "tag" && key != "proxy_protocol" {
+					client[key] = value
+				}
+			}
+		} else {
+			client["detour"] = defaultOutbound["tag"]
+		}
+		httpClients = []map[string]any{client}
+		route["default_http_client"] = clientTag
+	}
 	dns, err := compileDNS(top.DNS)
 	if err != nil {
 		return nil, err
@@ -57,10 +86,11 @@ func Compile(top topology.MachineTopology) ([]byte, error) {
 			"level":     "info",
 			"timestamp": true,
 		},
-		DNS:       dns,
-		Inbounds:  inbounds,
-		Outbounds: outbounds,
-		Route:     route,
+		DNS:         dns,
+		HTTPClients: httpClients,
+		Inbounds:    inbounds,
+		Outbounds:   outbounds,
+		Route:       route,
 		Experimental: map[string]any{
 			"cache_file": map[string]any{
 				"enabled": true,
@@ -69,6 +99,18 @@ func Compile(top topology.MachineTopology) ([]byte, error) {
 		},
 	}
 	return json.MarshalIndent(cfg, "", "  ")
+}
+
+func needsDefaultRuleSetHTTPClient(route *topology.Route) bool {
+	if route == nil {
+		return false
+	}
+	for _, ruleSet := range route.RuleSets {
+		if ruleSet.Type == "remote" && ruleSet.DownloadDetour == "" {
+			return true
+		}
+	}
+	return false
 }
 
 type compiledInboundMetadata struct {
