@@ -6,7 +6,7 @@ original package structure under an internal module path.
 - Project: `github.com/SagerNet/sing-box`
 - Source tag: `v1.14.1`
 - Upstream commit: `1ac1a339cb1223e9c70eae14c44411c75033c02d`
-- ACP fork commit: `4c07687ad9180f8c6b83fc5e4fd5a73a7ea7b8d7`
+- ACP fork commit: `302319a74e006d426d460a2ebc13c79e314d5c1f`
 - Imported packages: `schema`, `option`, `constant`, `constant/goos`,
   `common/badversion`, `experimental/locale`, and
   `experimental/deprecated`
