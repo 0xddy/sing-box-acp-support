@@ -9,7 +9,7 @@ import (
 )
 
 func TestCompileSnapshotKeepsCredentialsAndRealityPrivateKey(t *testing.T) {
-	providerConfig, _ := json.Marshal(sharedprovider.VLESSRealityVisionConfig{Type: "vless", Tag: "node-1", Listen: "::", ListenPort: 443, Flow: "xtls-rprx-vision", TLS: sharedprovider.VLESSRealityVisionTLSConfig{Enabled: true, ServerName: "www.example.com", Reality: sharedprovider.VLESSRealityConfig{Enabled: true, PrivateKey: "reality-private-key", ShortID: []string{"0123456789abcdef"}, Handshake: sharedprovider.RealityHandshake{Server: "www.example.com", ServerPort: 443}}}})
+	providerConfig, _ := json.Marshal(sharedprovider.VLESSRealityVisionConfig{Type: "vless", Tag: "node-1", Listen: "::", ListenPort: 443, Flow: "xtls-rprx-vision", TLS: sharedprovider.VLESSRealityVisionTLSConfig{Enabled: true, ServerName: "www.example.com", Reality: sharedprovider.VLESSRealityConfig{Enabled: true, PrivateKey: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", ShortID: []string{"0123456789abcdef"}, Handshake: sharedprovider.RealityHandshake{Server: "www.example.com", ServerPort: 443}}}})
 	compiled, err := CompileSnapshot(&acpv1.TopologySnapshot{MachineId: "machine-1", Nodes: []*acpv1.NodeTopology{{NodeId: "node-1", ProviderId: sharedprovider.VLESSRealityVisionID, ProviderConfigVersion: sharedprovider.CurrentConfigVersion, ProviderConfigJson: providerConfig, Users: []*acpv1.UserCredential{{UserId: "1", Credential: "11111111-1111-4111-8111-111111111111"}}}}, Outbounds: []*acpv1.OutboundConfig{{Type: "direct", Tag: "direct"}}, Route: &acpv1.RouteConfig{Final: "direct"}})
 	if err != nil {
 		t.Fatalf("CompileSnapshot() error = %v", err)
@@ -22,7 +22,7 @@ func TestCompileSnapshotKeepsCredentialsAndRealityPrivateKey(t *testing.T) {
 	if got := inbound["users"].([]any)[0].(map[string]any)["uuid"]; got != "11111111-1111-4111-8111-111111111111" {
 		t.Fatalf("uuid = %v", got)
 	}
-	if got := inbound["tls"].(map[string]any)["reality"].(map[string]any)["private_key"]; got != "reality-private-key" {
+	if got := inbound["tls"].(map[string]any)["reality"].(map[string]any)["private_key"]; got != "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" {
 		t.Fatalf("private_key = %v", got)
 	}
 }
@@ -61,6 +61,18 @@ func TestCompileSnapshotEmitsDefaultDomainResolver(t *testing.T) {
 	dns := config["dns"].(map[string]any)
 	if dns["final"] != "default-dns" {
 		t.Fatalf("dns.final = %v, want default-dns", dns["final"])
+	}
+}
+
+func TestCompileSnapshotRejectsInvalidRouteConversion(t *testing.T) {
+	compiled, err := CompileSnapshot(&acpv1.TopologySnapshot{
+		MachineId: "machine-1",
+		Route: &acpv1.RouteConfig{Rules: []*acpv1.RouteRule{{
+			Action: "reject", IpVersion: 300,
+		}}},
+	})
+	if err == nil || compiled != nil {
+		t.Fatalf("invalid route must not compile into an unrestricted reject: config=%s err=%v", compiled, err)
 	}
 }
 
@@ -196,7 +208,7 @@ func vlessSnapshotNode(t *testing.T, nodeID string, users []*acpv1.UserCredentia
 		TLS: sharedprovider.VLESSRealityVisionTLSConfig{
 			Enabled: true, ServerName: "www.example.com",
 			Reality: sharedprovider.VLESSRealityConfig{
-				Enabled: true, PrivateKey: "reality-private-key", ShortID: []string{"0123456789abcdef"},
+				Enabled: true, PrivateKey: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", ShortID: []string{"0123456789abcdef"},
 				Handshake: sharedprovider.RealityHandshake{Server: "www.example.com", ServerPort: 443},
 			},
 		},

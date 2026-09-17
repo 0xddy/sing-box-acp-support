@@ -124,9 +124,9 @@ func TestVLESSRealityProviderSafetyParity(t *testing.T) {
 			cfg := sharedprovider.VLESSRealityVisionConfig{
 				Type: "vless", ListenPort: 443, Sniff: true,
 				TLS: sharedprovider.VLESSRealityVisionTLSConfig{
-					Enabled: true,
+					Enabled: true, ServerName: "www.example.com",
 					Reality: sharedprovider.VLESSRealityConfig{
-						Enabled: true, PrivateKey: "test-private-key", ShortID: []string{"0123456789abcdef"},
+						Enabled: true, PrivateKey: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", ShortID: []string{"0123456789abcdef"},
 						Handshake: sharedprovider.RealityHandshake{Server: "www.example.com", ServerPort: 443},
 					},
 				},

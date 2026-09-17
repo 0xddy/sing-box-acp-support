@@ -91,7 +91,7 @@ func snapshotCases(t *testing.T) []struct {
 		TLS: sharedprovider.VLESSRealityVisionTLSConfig{
 			Enabled: true, ServerName: "www.example.com",
 			Reality: sharedprovider.VLESSRealityConfig{
-				Enabled: true, PrivateKey: "private-key", ShortID: []string{"0123456789abcdef"},
+				Enabled: true, PrivateKey: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", ShortID: []string{"0123456789abcdef"},
 				Handshake: sharedprovider.RealityHandshake{Server: "www.example.com", ServerPort: 443},
 			},
 		},

@@ -18,7 +18,7 @@ func providerJSON(t *testing.T, value any) json.RawMessage {
 }
 
 func vlessNode(t *testing.T, credential string) topology.NodeInstance {
-	return topology.NodeInstance{NodeID: "node-vless-1", ProviderID: sharedprovider.VLESSRealityVisionID, ProviderConfigVersion: sharedprovider.CurrentConfigVersion, ProviderConfig: providerJSON(t, sharedprovider.VLESSRealityVisionConfig{Type: "vless", Tag: "node-vless-1", Listen: "::", ListenPort: 443, Flow: "xtls-rprx-vision", TCPFastOpen: true, Sniff: true, TLS: sharedprovider.VLESSRealityVisionTLSConfig{Enabled: true, ServerName: "www.example.com", Reality: sharedprovider.VLESSRealityConfig{Enabled: true, PrivateKey: "private-key", ShortID: []string{"0123456789abcdef"}, Handshake: sharedprovider.RealityHandshake{Server: "www.example.com", ServerPort: 443}}}}), Users: []topology.UserCredential{{UserID: "1", Credential: credential}}}
+	return topology.NodeInstance{NodeID: "node-vless-1", ProviderID: sharedprovider.VLESSRealityVisionID, ProviderConfigVersion: sharedprovider.CurrentConfigVersion, ProviderConfig: providerJSON(t, sharedprovider.VLESSRealityVisionConfig{Type: "vless", Tag: "node-vless-1", Listen: "::", ListenPort: 443, Flow: "xtls-rprx-vision", TCPFastOpen: true, Sniff: true, TLS: sharedprovider.VLESSRealityVisionTLSConfig{Enabled: true, ServerName: "www.example.com", Reality: sharedprovider.VLESSRealityConfig{Enabled: true, PrivateKey: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", ShortID: []string{"0123456789abcdef"}, Handshake: sharedprovider.RealityHandshake{Server: "www.example.com", ServerPort: 443}}}}), Users: []topology.UserCredential{{UserID: "1", Credential: credential}}}
 }
 
 func TestCompileVLESSRealityVisionProvider(t *testing.T) {

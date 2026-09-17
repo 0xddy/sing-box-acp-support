@@ -2,49 +2,7 @@ package compiler
 
 import (
 	"encoding/json"
-
-	"github.com/0xddy/sing-box-acp-support/internal/topology"
 )
-
-func applyDialerOptions(target map[string]any, dialer topology.DialerOptions) {
-	applyOptionalString(target, "detour", dialer.Detour)
-	applyOptionalString(target, "bind_interface", dialer.BindInterface)
-	applyOptionalString(target, "inet4_bind_address", dialer.Inet4BindAddress)
-	applyOptionalString(target, "inet6_bind_address", dialer.Inet6BindAddress)
-	if dialer.RoutingMark != 0 {
-		target["routing_mark"] = dialer.RoutingMark
-	}
-	if dialer.ReuseAddr {
-		target["reuse_addr"] = dialer.ReuseAddr
-	}
-	applyOptionalString(target, "connect_timeout", dialer.ConnectTimeout)
-	if dialer.TCPFastOpen {
-		target["tcp_fast_open"] = dialer.TCPFastOpen
-	}
-	if dialer.TCPMultiPath {
-		target["tcp_multi_path"] = dialer.TCPMultiPath
-	}
-	if dialer.UDPFragment {
-		target["udp_fragment"] = dialer.UDPFragment
-	}
-	applyOptionalString(target, "udp_timeout", dialer.UDPTimeout)
-	applyOptionalString(target, "domain_strategy", dialer.DomainStrategy)
-	if dialer.BindAddressNoPort {
-		target["bind_address_no_port"] = dialer.BindAddressNoPort
-	}
-	applyOptionalString(target, "protect_path", dialer.ProtectPath)
-	applyOptionalString(target, "netns", dialer.NetNS)
-	if dialer.DisableTCPKeepAlive {
-		target["disable_tcp_keep_alive"] = dialer.DisableTCPKeepAlive
-	}
-	applyOptionalString(target, "tcp_keep_alive", dialer.TCPKeepAlive)
-	applyOptionalString(target, "tcp_keep_alive_interval", dialer.TCPKeepAliveInterval)
-	applyNestedStruct(target, "domain_resolver", dialer.DomainResolver)
-	applyNestedStruct(target, "network_strategy", dialer.NetworkStrategy)
-	applyStringList(target, "network_type", dialer.NetworkType)
-	applyStringList(target, "fallback_network_type", dialer.FallbackNetworkType)
-	applyOptionalString(target, "fallback_delay", dialer.FallbackDelay)
-}
 
 func applyOptionalString(target map[string]any, key string, value string) {
 	if value != "" {

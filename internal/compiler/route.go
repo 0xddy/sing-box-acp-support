@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 
+	C "github.com/0xddy/sing-box-acp-support/internal/singbox/constant"
 	"github.com/0xddy/sing-box-acp-support/internal/topology"
 )
 
@@ -16,6 +17,9 @@ func compileRoute(route *topology.Route, outboundTags map[string]struct{}, defau
 	}
 
 	compiled := map[string]any{}
+	if err := validateNetworkStrategy("default_network_strategy", route.DefaultNetworkStrategy); err != nil {
+		return nil, err
+	}
 
 	if len(route.Rules) > 0 {
 		rules := make([]map[string]any, 0, len(route.Rules))
@@ -63,7 +67,7 @@ func compileRoute(route *topology.Route, outboundTags map[string]struct{}, defau
 		compiled["override_android_vpn"] = route.OverrideAndroidVPN
 	}
 	applyNestedStruct(compiled, "default_domain_resolver", route.DefaultDomainResolver)
-	applyNestedStruct(compiled, "default_network_strategy", route.DefaultNetworkStrategy)
+	applyOptionalString(compiled, "default_network_strategy", route.DefaultNetworkStrategy)
 	applyStringList(compiled, "default_network_type", route.DefaultNetworkType)
 	applyStringList(compiled, "default_fallback_network_type", route.DefaultFallbackNetworkType)
 	applyOptionalString(compiled, "default_fallback_delay", route.DefaultFallbackDelay)
@@ -181,10 +185,16 @@ func compileRouteRule(rule topology.RouteRule, outboundTags map[string]struct{})
 		compiled["action"] = rule.Action
 	}
 	if rule.RouteOptions != nil {
+		if err := validateNetworkStrategy("route_options.network_strategy", rule.RouteOptions.NetworkStrategy); err != nil {
+			return nil, err
+		}
 		mergeStruct(compiled, rule.RouteOptions)
 	}
 	if rule.DirectOptions != nil {
-		applyDialerOptions(compiled, *rule.DirectOptions)
+		if err := validateNetworkStrategy("direct_options.network_strategy", rule.DirectOptions.NetworkStrategy); err != nil {
+			return nil, err
+		}
+		mergeStruct(compiled, rule.DirectOptions)
 	}
 	if rule.SniffOptions != nil {
 		mergeStruct(compiled, rule.SniffOptions)
@@ -199,6 +209,16 @@ func compileRouteRule(rule topology.RouteRule, outboundTags map[string]struct{})
 		compiled["no_drop"] = rule.NoDrop
 	}
 	return compiled, nil
+}
+
+func validateNetworkStrategy(field string, strategy string) error {
+	if strategy == "" {
+		return nil
+	}
+	if _, ok := C.StringToNetworkStrategy[strategy]; !ok {
+		return fmt.Errorf("%s has unsupported value %q", field, strategy)
+	}
+	return nil
 }
 
 func compileRouteRuleSet(ruleSet topology.RouteRuleSet) (map[string]any, error) {

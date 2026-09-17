@@ -17,7 +17,11 @@ func CompileSnapshot(snapshot *acpv1.TopologySnapshot) ([]byte, error) {
 	if snapshot == nil {
 		return nil, errors.New("topology snapshot is required")
 	}
-	return compiler.Compile(topology.FromSnapshot(snapshot.GetMachineId(), snapshot))
+	top, err := topology.FromSnapshot(snapshot.GetMachineId(), snapshot)
+	if err != nil {
+		return nil, err
+	}
+	return compiler.Compile(top)
 }
 
 // ValidateOutbound checks an outbound's raw options against the sing-box

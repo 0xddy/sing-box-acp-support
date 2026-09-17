@@ -46,8 +46,7 @@ type Outbound struct {
 	Options json.RawMessage `json:"options,omitempty"`
 }
 
-type DialerOptions struct {
-	Detour               string                `json:"detour,omitempty"`
+type DirectActionOptions struct {
 	BindInterface        string                `json:"bind_interface,omitempty"`
 	Inet4BindAddress     string                `json:"inet4_bind_address,omitempty"`
 	Inet6BindAddress     string                `json:"inet6_bind_address,omitempty"`
@@ -56,8 +55,7 @@ type DialerOptions struct {
 	ConnectTimeout       string                `json:"connect_timeout,omitempty"`
 	TCPFastOpen          bool                  `json:"tcp_fast_open,omitempty"`
 	TCPMultiPath         bool                  `json:"tcp_multi_path,omitempty"`
-	UDPFragment          bool                  `json:"udp_fragment,omitempty"`
-	UDPTimeout           string                `json:"udp_timeout,omitempty"`
+	UDPFragment          *bool                 `json:"udp_fragment,omitempty"`
 	DomainStrategy       string                `json:"domain_strategy,omitempty"`
 	BindAddressNoPort    bool                  `json:"bind_address_no_port,omitempty"`
 	ProtectPath          string                `json:"protect_path,omitempty"`
@@ -66,7 +64,7 @@ type DialerOptions struct {
 	TCPKeepAlive         string                `json:"tcp_keep_alive,omitempty"`
 	TCPKeepAliveInterval string                `json:"tcp_keep_alive_interval,omitempty"`
 	DomainResolver       *DomainResolveOptions `json:"domain_resolver,omitempty"`
-	NetworkStrategy      *NetworkStrategy      `json:"network_strategy,omitempty"`
+	NetworkStrategy      string                `json:"network_strategy,omitempty"`
 	NetworkType          []string              `json:"network_type,omitempty"`
 	FallbackNetworkType  []string              `json:"fallback_network_type,omitempty"`
 	FallbackDelay        string                `json:"fallback_delay,omitempty"`
@@ -78,12 +76,6 @@ type DomainResolveOptions struct {
 	DisableCache bool    `json:"disable_cache,omitempty"`
 	RewriteTTL   *uint32 `json:"rewrite_ttl,omitempty"`
 	ClientSubnet string  `json:"client_subnet,omitempty"`
-}
-
-type NetworkStrategy struct {
-	Type          []string `json:"type,omitempty"`
-	FallbackType  []string `json:"fallback_type,omitempty"`
-	FallbackDelay string   `json:"fallback_delay,omitempty"`
 }
 
 type Route struct {
@@ -98,7 +90,7 @@ type Route struct {
 	Geosite                    *GeositeOptions       `json:"geosite,omitempty"`
 	OverrideAndroidVPN         bool                  `json:"override_android_vpn,omitempty"`
 	DefaultDomainResolver      *DomainResolveOptions `json:"default_domain_resolver,omitempty"`
-	DefaultNetworkStrategy     *NetworkStrategy      `json:"default_network_strategy,omitempty"`
+	DefaultNetworkStrategy     string                `json:"default_network_strategy,omitempty"`
 	DefaultNetworkType         []string              `json:"default_network_type,omitempty"`
 	DefaultFallbackNetworkType []string              `json:"default_fallback_network_type,omitempty"`
 	DefaultFallbackDelay       string                `json:"default_fallback_delay,omitempty"`
@@ -197,7 +189,7 @@ type RouteRule struct {
 	PreferredBy              []string              `json:"preferred_by,omitempty"`
 	RuleSetIPCIDRMatchSource bool                  `json:"rule_set_ip_cidr_match_source,omitempty"`
 	RouteOptions             *RouteActionOptions   `json:"route_options,omitempty"`
-	DirectOptions            *DialerOptions        `json:"direct_options,omitempty"`
+	DirectOptions            *DirectActionOptions  `json:"direct_options,omitempty"`
 	SniffOptions             *SniffActionOptions   `json:"sniff_options,omitempty"`
 	ResolveOptions           *ResolveActionOptions `json:"resolve_options,omitempty"`
 }
@@ -214,16 +206,16 @@ type RouteRuleSet struct {
 }
 
 type RouteActionOptions struct {
-	OverrideAddress           string           `json:"override_address,omitempty"`
-	OverridePort              uint32           `json:"override_port,omitempty"`
-	NetworkStrategy           *NetworkStrategy `json:"network_strategy,omitempty"`
-	FallbackDelay             uint32           `json:"fallback_delay,omitempty"`
-	UDPDisableDomainUnmapping bool             `json:"udp_disable_domain_unmapping,omitempty"`
-	UDPConnect                bool             `json:"udp_connect,omitempty"`
-	UDPTimeout                string           `json:"udp_timeout,omitempty"`
-	TLSFragment               bool             `json:"tls_fragment,omitempty"`
-	TLSFragmentFallbackDelay  string           `json:"tls_fragment_fallback_delay,omitempty"`
-	TLSRecordFragment         bool             `json:"tls_record_fragment,omitempty"`
+	OverrideAddress           string `json:"override_address,omitempty"`
+	OverridePort              uint32 `json:"override_port,omitempty"`
+	NetworkStrategy           string `json:"network_strategy,omitempty"`
+	FallbackDelay             uint32 `json:"fallback_delay,omitempty"`
+	UDPDisableDomainUnmapping bool   `json:"udp_disable_domain_unmapping,omitempty"`
+	UDPConnect                bool   `json:"udp_connect,omitempty"`
+	UDPTimeout                string `json:"udp_timeout,omitempty"`
+	TLSFragment               bool   `json:"tls_fragment,omitempty"`
+	TLSFragmentFallbackDelay  string `json:"tls_fragment_fallback_delay,omitempty"`
+	TLSRecordFragment         bool   `json:"tls_record_fragment,omitempty"`
 }
 
 type SniffActionOptions struct {

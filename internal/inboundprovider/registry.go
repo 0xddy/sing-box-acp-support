@@ -1,8 +1,11 @@
 package inboundprovider
 
 import (
+	"encoding/base64"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/0xddy/sing-box-acp-support/internal/topology"
 	sharedprovider "github.com/acp/node-agent/api/provider"
@@ -79,6 +82,21 @@ func (vlessRealityVisionAdapter) Build(node topology.NodeInstance, users []topol
 	}
 	if cfg.TLS.Reality.Handshake.Server == "" || cfg.TLS.Reality.Handshake.ServerPort == 0 {
 		return BuildResult{}, fmt.Errorf("node %s vless provider requires a reality handshake server and port", node.NodeID)
+	}
+	if strings.TrimSpace(cfg.TLS.ServerName) == "" {
+		return BuildResult{}, fmt.Errorf("node %s vless provider requires tls.server_name", node.NodeID)
+	}
+	privateKey, err := base64.RawURLEncoding.DecodeString(cfg.TLS.Reality.PrivateKey)
+	if err != nil || len(privateKey) != 32 {
+		return BuildResult{}, fmt.Errorf("node %s vless reality private_key must be a base64url-encoded 32-byte key", node.NodeID)
+	}
+	for i, shortID := range cfg.TLS.Reality.ShortID {
+		if len(shortID) > 16 {
+			return BuildResult{}, fmt.Errorf("node %s vless reality short_id[%d] must contain at most 16 hex characters", node.NodeID, i)
+		}
+		if _, err := hex.DecodeString(shortID); err != nil {
+			return BuildResult{}, fmt.Errorf("node %s vless reality short_id[%d] must contain an even number of hex characters", node.NodeID, i)
+		}
 	}
 	tag := cfg.Tag
 	if tag == "" {

@@ -43,6 +43,32 @@ func testUsers() []topology.UserCredential {
 	return []topology.UserCredential{{UserID: "user-1", Credential: "secret"}}
 }
 
+func vlessNode(t *testing.T, mutate func(*sharedprovider.VLESSRealityVisionConfig)) topology.NodeInstance {
+	t.Helper()
+	cfg := sharedprovider.VLESSRealityVisionConfig{
+		Type: "vless", ListenPort: 443, Flow: topology.VLESSFlowRealityVision,
+		TLS: sharedprovider.VLESSRealityVisionTLSConfig{
+			Enabled: true, ServerName: "www.example.com",
+			Reality: sharedprovider.VLESSRealityConfig{
+				Enabled: true, PrivateKey: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+				ShortID:   []string{"0123456789abcdef"},
+				Handshake: sharedprovider.RealityHandshake{Server: "www.example.com", ServerPort: 443},
+			},
+		},
+	}
+	if mutate != nil {
+		mutate(&cfg)
+	}
+	encoded, err := json.Marshal(cfg)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return topology.NodeInstance{
+		NodeID: "node-1", ProviderID: sharedprovider.VLESSRealityVisionID,
+		ProviderConfigVersion: sharedprovider.CurrentConfigVersion, ProviderConfig: encoded,
+	}
+}
+
 // Each direction maps to an independent sing-box bandwidth setting, so a node
 // that only caps one direction must keep that cap.
 func TestHysteria2BandwidthDirectionsAreIndependent(t *testing.T) {
@@ -85,5 +111,37 @@ func TestHysteria2RejectsNegativeBandwidth(t *testing.T) {
 	_, err := DefaultRegistry().Build(node, testUsers())
 	if err == nil || !strings.Contains(err.Error(), "must not be negative") {
 		t.Fatalf("build error = %v, want a negative bandwidth rejection", err)
+	}
+}
+
+func TestVLESSRejectsMalformedRealityParameters(t *testing.T) {
+	tests := []struct {
+		name   string
+		mutate func(*sharedprovider.VLESSRealityVisionConfig)
+		field  string
+	}{
+		{"missing SNI", func(c *sharedprovider.VLESSRealityVisionConfig) { c.TLS.ServerName = "" }, "server_name"},
+		{"invalid key encoding", func(c *sharedprovider.VLESSRealityVisionConfig) { c.TLS.Reality.PrivateKey = "bad-secret!" }, "private_key"},
+		{"short key", func(c *sharedprovider.VLESSRealityVisionConfig) { c.TLS.Reality.PrivateKey = "c2hvcnQ" }, "private_key"},
+		{"long short ID", func(c *sharedprovider.VLESSRealityVisionConfig) {
+			c.TLS.Reality.ShortID = []string{"0123456789abcdef00"}
+		}, "short_id[0]"},
+		{"odd short ID", func(c *sharedprovider.VLESSRealityVisionConfig) { c.TLS.Reality.ShortID = []string{"123"} }, "short_id[0]"},
+		{"non-hex short ID", func(c *sharedprovider.VLESSRealityVisionConfig) { c.TLS.Reality.ShortID = []string{"xyzsecret"} }, "short_id[0]"},
+	}
+	for _, testCase := range tests {
+		t.Run(testCase.name, func(t *testing.T) {
+			_, err := DefaultRegistry().Build(vlessNode(t, testCase.mutate), testUsers())
+			if err == nil || !strings.Contains(err.Error(), testCase.field) {
+				t.Fatalf("error=%v, want field %s", err, testCase.field)
+			}
+		})
+	}
+	for _, shortID := range []string{"", "00", "0123456789abcdef"} {
+		if _, err := DefaultRegistry().Build(vlessNode(t, func(c *sharedprovider.VLESSRealityVisionConfig) {
+			c.TLS.Reality.ShortID = []string{shortID}
+		}), testUsers()); err != nil {
+			t.Fatalf("valid short ID %q rejected: %v", shortID, err)
+		}
 	}
 }
