@@ -11,7 +11,7 @@ Compatibility baselines:
 - planned support release tag: `v1.14.1-acp.1`
 - embedded sing-box configuration source tag: `v1.14.1`
 - upstream sing-box source commit: `1ac1a339cb1223e9c70eae14c44411c75033c02d`
-- node-agent commit: `8975b3f16c8ce85985f92c1b6b734726ca7ceb9f`
+- node-agent commit: `e058ad2dfab6d9b3881c6e93e8225723d6a02851`
 - sing-box-acp commit: `4c07687ad9180f8c6b83fc5e4fd5a73a7ea7b8d7`
 - sing-quic upstream commit: `4ab2eceaac81e073f53b22ec72ff56aaea89a3d1`
 - sing-quic version: `v0.7.0` (the same source commit as `v0.7.0-beta.4`)
