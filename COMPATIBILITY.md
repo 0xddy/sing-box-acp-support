@@ -7,12 +7,12 @@ runtime or sing-box protocol constructors.
 Compatibility baselines:
 
 - historical support release tag: `v1.14.0-acp.1`
-- upgrade branch: `agent/upgrade-sing-box-1.14.1`
+- default branch: `main`
 - planned support release tag: `v1.14.1-acp.1`
 - embedded sing-box configuration source tag: `v1.14.1`
 - upstream sing-box source commit: `1ac1a339cb1223e9c70eae14c44411c75033c02d`
 - node-agent commit: `358eef0bfbbe8fb0d9f0f2e2519983d34dbaf6d9`
-- sing-box-acp commit: `05b04234a74d4ce347b1fca891ecac6be43328d7`
+- sing-box-acp commit: `2e3c5327aa358ebf3592ba1953f299b762672030`
 - sing-quic upstream commit: `4ab2eceaac81e073f53b22ec72ff56aaea89a3d1`
 - sing-quic version: `v0.7.0` (the same source commit as `v0.7.0-beta.4`)
 
@@ -35,8 +35,8 @@ The embedded configuration-layer packages retain their original source
 provenance, import-path adaptation, GPLv3 license, and source notice under
 `internal/singbox`. This upgrade includes the three upstream option-model
 changes present in the embedded package set and the ACP fork's direct-action
-decoding fix. The historical `v1.14.0-acp.1` tag and
-`agent/upgrade-sing-box-1.14.0` branch remain available for rollback.
+decoding fix. Development is consolidated on `main`; the historical
+`v1.14.0-acp.1` tag remains available for rollback.
 
 The panel-facing compiler now follows the current node's default Hysteria2
 sniff rule (`300ms`), REALITY listener safety checks, DNS hostname bootstrap
