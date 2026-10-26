@@ -16,10 +16,10 @@ func TestAnyTLSCompilationParity(t *testing.T) {
 		suffix  string
 		invalid bool
 	}{
-		{"static", sharedprovider.WebConfig{Type: "static", Title: "Website", Body: "About"}, "", false},
+		{"static", sharedprovider.WebConfig{Type: "static", Content: " \n<h1>Website</h1><script>document.title = 'Website';</script>\n "}, "", false},
 		{"proxy", sharedprovider.WebConfig{Type: "proxy", URL: "https://example.com/site"}, "", false},
 		{"unknown-mode", sharedprovider.WebConfig{Type: "unknown"}, "", true},
-		{"trailing-json", sharedprovider.WebConfig{Type: "static", Title: "Website"}, " {}", true},
+		{"trailing-json", sharedprovider.WebConfig{Type: "static", Content: "<h1>Website</h1>"}, " {}", true},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			config.Web = tc.web
