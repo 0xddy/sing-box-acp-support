@@ -6,7 +6,7 @@ original package structure under an internal module path.
 - Project: `github.com/SagerNet/sing-box`
 - Source tag: `v1.14.1`
 - Upstream commit: `1ac1a339cb1223e9c70eae14c44411c75033c02d`
-- ACP fork commit: `302319a74e006d426d460a2ebc13c79e314d5c1f`
+- ACP fork commit: `05b04234a74d4ce347b1fca891ecac6be43328d7`
 - Imported packages: `schema`, `option`, `constant`, `constant/goos`,
   `common/badversion`, `experimental/locale`, and
   `experimental/deprecated`
@@ -17,6 +17,12 @@ change in `option/rule_nested.go`: explicit actions are decoded by their own
 option types so a direct action's duration-valued `fallback_delay` is accepted.
 Imports referring to other sing-box packages were mechanically rewritten to
 the corresponding internal paths in this module.
+
+The ACP AnyTLS integration adds `option/web.go` and the `web` field in
+`option/anytls.go`. These configuration-only sources are synchronized from the
+sibling ACP core using `tools/sync_singbox_config.ps1`; the HTTP runtime is not
+copied into this module. The commit recorded above identifies the synchronized
+configuration source.
 
 One behavior-neutral lint-only adjustment wraps the deferred
 `buf.Put(buffer)` call in `option/dns_record.go` and explicitly discards its

@@ -11,8 +11,8 @@ Compatibility baselines:
 - planned support release tag: `v1.14.1-acp.1`
 - embedded sing-box configuration source tag: `v1.14.1`
 - upstream sing-box source commit: `1ac1a339cb1223e9c70eae14c44411c75033c02d`
-- node-agent commit: `5579e00d495570a796b3c258122fc8911d8670a8`
-- sing-box-acp commit: `302319a74e006d426d460a2ebc13c79e314d5c1f`
+- node-agent commit: `bbc65d623f9a8b2af2d07796d25c2c38185b0dcd`
+- sing-box-acp commit: `05b04234a74d4ce347b1fca891ecac6be43328d7`
 - sing-quic upstream commit: `4ab2eceaac81e073f53b22ec72ff56aaea89a3d1`
 - sing-quic version: `v0.7.0` (the same source commit as `v0.7.0-beta.4`)
 
@@ -22,6 +22,14 @@ Current configuration compatibility target:
 - node-agent API module: `github.com/acp/node-agent`
 - supported outbound types, in order: `direct`, `selector`, `urltest`,
   `shadowsocks`, `trojan`, `vless`, `hysteria2`
+
+The AnyTLS integration adds the inbound provider `anytls-tls@1`, its
+shared configuration compiler and pure `WebOptions` model/validation. The
+support module does not import `webcontent`, `webserver`, AnyTLS sessions or
+other protocol runtime packages. `compat/TestAnyTLSCompilationParity` compares
+static/proxy configurations and rejected inputs against node-agent.
+The commit pins above identify the tested core/agent pair. Keep them aligned
+with the dependency SHAs in the panel and agent release workflows.
 
 The embedded configuration-layer packages retain their original source
 provenance, import-path adaptation, GPLv3 license, and source notice under

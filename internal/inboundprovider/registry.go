@@ -39,7 +39,7 @@ func NewRegistry(adapters ...Adapter) *Registry {
 }
 
 func DefaultRegistry() *Registry {
-	return NewRegistry(vlessRealityVisionAdapter{}, hysteria2SalamanderAdapter{})
+	return NewRegistry(vlessRealityVisionAdapter{}, hysteria2SalamanderAdapter{}, anytlsTLSAdapter{})
 }
 
 func (r *Registry) Build(node topology.NodeInstance, users []topology.UserCredential) (BuildResult, error) {
@@ -156,7 +156,9 @@ func (hysteria2SalamanderAdapter) Build(node topology.NodeInstance, users []topo
 	if cfg.UpMbps < 0 || cfg.DownMbps < 0 {
 		return BuildResult{}, fmt.Errorf(
 			"node %s hysteria2 bandwidth must not be negative: up_mbps=%d down_mbps=%d",
-			node.NodeID, cfg.UpMbps, cfg.DownMbps,
+			node.NodeID,
+			cfg.UpMbps,
+			cfg.DownMbps,
 		)
 	}
 	switch cfg.Obfs.Type {
