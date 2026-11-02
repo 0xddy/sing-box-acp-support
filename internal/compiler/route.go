@@ -1,6 +1,7 @@
 package compiler
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -8,7 +9,7 @@ import (
 	"github.com/0xddy/sing-box-acp-support/internal/topology"
 )
 
-func compileRoute(route *topology.Route, outboundTags map[string]struct{}, defaultFinal string) (map[string]any, error) {
+func compileRoute(route *topology.Route, outboundTags map[string]struct{}, defaultFinal string, outbounds *[]map[string]any) (map[string]any, error) {
 	if route == nil {
 		if defaultFinal == "" {
 			return nil, nil
@@ -23,10 +24,19 @@ func compileRoute(route *topology.Route, outboundTags map[string]struct{}, defau
 
 	if len(route.Rules) > 0 {
 		rules := make([]map[string]any, 0, len(route.Rules))
-		for _, rule := range route.Rules {
+		for i, rule := range route.Rules {
 			compiledRule, err := compileRouteRule(rule, outboundTags)
 			if err != nil {
 				return nil, err
+			}
+			if rule.Action == "direct" {
+				outbound, err := compileDirectRuleOutbound(i, rule, outboundTags)
+				if err != nil {
+					return nil, err
+				}
+				*outbounds = append(*outbounds, outbound)
+				compiledRule["action"] = "route"
+				compiledRule["outbound"] = outbound["tag"]
 			}
 			rules = append(rules, compiledRule)
 		}
@@ -72,6 +82,30 @@ func compileRoute(route *topology.Route, outboundTags map[string]struct{}, defau
 	applyStringList(compiled, "default_fallback_network_type", route.DefaultFallbackNetworkType)
 	applyOptionalString(compiled, "default_fallback_delay", route.DefaultFallbackDelay)
 	return compiled, nil
+}
+
+// sing-box 1.14.4 routes direct traffic through a named outbound. Keep each
+// rule's dialer options separate from its match fields and the default outbound.
+func compileDirectRuleOutbound(index int, rule topology.RouteRule, tags map[string]struct{}) (map[string]any, error) {
+	if rule.Outbound != "" {
+		return nil, fmt.Errorf("direct route cannot specify outbound %q", rule.Outbound)
+	}
+	tag := fmt.Sprintf("__acp_route_direct_%d", index)
+	for {
+		if _, exists := tags[tag]; !exists {
+			break
+		}
+		tag += "_"
+	}
+	outbound := topology.Outbound{Type: topology.OutboundTypeDirect, Tag: tag}
+	if rule.DirectOptions != nil {
+		options, err := json.Marshal(rule.DirectOptions)
+		if err != nil {
+			return nil, err
+		}
+		outbound.Options = options
+	}
+	return compileOutbound(outbound)
 }
 
 func compileRouteRule(rule topology.RouteRule, outboundTags map[string]struct{}) (map[string]any, error) {
@@ -194,7 +228,9 @@ func compileRouteRule(rule topology.RouteRule, outboundTags map[string]struct{})
 		if err := validateNetworkStrategy("direct_options.network_strategy", rule.DirectOptions.NetworkStrategy); err != nil {
 			return nil, err
 		}
-		mergeStruct(compiled, rule.DirectOptions)
+		if rule.Action != "direct" {
+			mergeStruct(compiled, rule.DirectOptions)
+		}
 	}
 	if rule.SniffOptions != nil {
 		mergeStruct(compiled, rule.SniffOptions)

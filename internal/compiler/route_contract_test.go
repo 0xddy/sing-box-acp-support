@@ -29,12 +29,19 @@ func TestRouteContractMatchesEmbeddedSingBox(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	top.Outbounds = []topology.Outbound{{Type: "direct", Tag: "__acp_route_direct_1"}}
 	compiled, err := Compile(top)
 	if err != nil {
 		t.Fatal(err)
 	}
 	var config struct {
-		Route json.RawMessage `json:"route"`
+		Route     json.RawMessage `json:"route"`
+		Outbounds []struct {
+			Type          string
+			Tag           string
+			UDPFragment   *bool  `json:"udp_fragment"`
+			FallbackDelay string `json:"fallback_delay"`
+		} `json:"outbounds"`
 	}
 	if err = json.Unmarshal(compiled, &config); err != nil {
 		t.Fatal(err)
@@ -46,7 +53,14 @@ func TestRouteContractMatchesEmbeddedSingBox(t *testing.T) {
 	if parsed.DefaultNetworkStrategy == nil || C.NetworkStrategy(*parsed.DefaultNetworkStrategy) != C.NetworkStrategyFallback {
 		t.Fatalf("default strategy was lost: %+v", parsed.DefaultNetworkStrategy)
 	}
-	direct := parsed.Rules[1].DefaultOptions.DirectOptions
+	routeRule := parsed.Rules[1].DefaultOptions
+	if routeRule.Action != "route" || routeRule.RouteOptions.Outbound == "__acp_route_direct_1" || len(config.Outbounds) != 2 {
+		t.Fatalf("direct rule did not get its own outbound: %s", compiled)
+	}
+	direct := config.Outbounds[1]
+	if direct.Type != "direct" || direct.Tag != routeRule.RouteOptions.Outbound || direct.FallbackDelay != "500ms" {
+		t.Fatalf("unexpected direct outbound: %+v", direct)
+	}
 	if direct.UDPFragment == nil || *direct.UDPFragment {
 		t.Fatalf("explicit udp_fragment=false was lost: %+v", direct.UDPFragment)
 	}

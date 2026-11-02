@@ -43,7 +43,7 @@ func Compile(top topology.MachineTopology) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	route, err := compileRoute(top.Route, outboundTags, defaultRouteFinal)
+	route, err := compileRoute(top.Route, outboundTags, defaultRouteFinal, &outbounds)
 	if err != nil {
 		return nil, err
 	}

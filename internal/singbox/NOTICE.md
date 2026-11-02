@@ -4,17 +4,14 @@ The Go sources in this directory are derived from sing-box and retain the
 original package structure under an internal module path.
 
 - Project: `github.com/SagerNet/sing-box`
-- Source tag: `v1.14.1`
-- Upstream commit: `1ac1a339cb1223e9c70eae14c44411c75033c02d`
-- ACP fork commit: `6497bffdd8c704cf766e7cd5571fc95482c1ba99`
+- Source tag: `v1.14.4`
+- Upstream commit: `c005f35300ce76427dc285481ec5695f5b179cd2`
+- ACP fork commit: `373f2e593d5a28326a98a6038356482d9ef0f6b9`
 - Imported packages: `schema`, `option`, `constant`, `constant/goos`,
   `common/badversion`, `experimental/locale`, and
   `experimental/deprecated`
 
-The imported configuration layer includes the upstream `v1.14.1` changes to
-Clash API, HTTP/2, and OpenVPN option types. The ACP fork adds one configuration
-change in `option/rule_nested.go`: explicit actions are decoded by their own
-option types so a direct action's duration-valued `fallback_delay` is accepted.
+The imported configuration layer tracks the v1.14.4 option types.
 Imports referring to other sing-box packages were mechanically rewritten to
 the corresponding internal paths in this module.
 

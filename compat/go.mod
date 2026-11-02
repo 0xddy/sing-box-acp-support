@@ -3,7 +3,7 @@ module github.com/0xddy/sing-box-acp-support/compat
 go 1.25.5
 
 require (
-	github.com/0xddy/sing-box-acp-support v1.14.1-acp.1
+	github.com/0xddy/sing-box-acp-support v1.14.4-acp.1
 	github.com/acp/node-agent v0.0.0
 )
 
@@ -49,16 +49,17 @@ require (
 	github.com/sagernet/gvisor v0.0.0-20250811-sing-box-mod.1 // indirect
 	github.com/sagernet/netlink v0.0.0-20260814022025-64455d367bbf // indirect
 	github.com/sagernet/nftables v0.3.0-mod.4 // indirect
-	github.com/sagernet/quic-go v0.61.0-sing-box-mod.7 // indirect
-	github.com/sagernet/sing v0.9.4 // indirect
-	github.com/sagernet/sing-box v1.14.1 // indirect
-	github.com/sagernet/sing-mux v0.3.6 // indirect
-	github.com/sagernet/sing-quic v0.7.0 // indirect
+	github.com/sagernet/quic-go v0.61.0-sing-box-mod.12 // indirect
+	github.com/sagernet/sing v0.9.7-0.20261023115459-5dc452e537bf // indirect
+	github.com/sagernet/sing-box v1.14.4 // indirect
+	github.com/sagernet/sing-mux v0.3.10-0.20260929204512-caf09fe32475 // indirect
+	github.com/sagernet/sing-quic v0.7.2-0.20261020082049-7e0a5869a5f4 // indirect
 	github.com/sagernet/sing-shadowsocks v0.2.9 // indirect
 	github.com/sagernet/sing-shadowsocks2 v0.2.2 // indirect
-	github.com/sagernet/sing-tun v0.9.3 // indirect
+	github.com/sagernet/sing-snell v0.0.0-20260904135315-bc5a12ac736f // indirect
+	github.com/sagernet/sing-tun v0.9.7-0.20261023115432-040db71fcd33 // indirect
 	github.com/sagernet/sing-usbip v0.0.0-20260817040617-28bd42667eca // indirect
-	github.com/sagernet/sing-vmess v0.2.8 // indirect
+	github.com/sagernet/sing-vmess v0.2.9-0.20261019223527-a0c58542bd9d // indirect
 	github.com/sagernet/smux v1.5.50-sing-box-mod.1 // indirect
 	github.com/sagernet/ws v0.0.0-20231204124109-acfe8907c854 // indirect
 	github.com/vishvananda/netns v0.0.5 // indirect

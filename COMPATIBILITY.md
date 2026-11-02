@@ -8,13 +8,13 @@ Compatibility baselines:
 
 - historical support release tag: `v1.14.0-acp.1`
 - default branch: `main`
-- planned support release tag: `v1.14.1-acp.1`
-- embedded sing-box configuration source tag: `v1.14.1`
-- upstream sing-box source commit: `1ac1a339cb1223e9c70eae14c44411c75033c02d`
-- node-agent commit: `ab328e6707aac27a58a615729642cf189139c06d`
-- sing-box-acp commit: `6497bffdd8c704cf766e7cd5571fc95482c1ba99`
-- sing-quic upstream commit: `4ab2eceaac81e073f53b22ec72ff56aaea89a3d1`
-- sing-quic version: `v0.7.0` (the same source commit as `v0.7.0-beta.4`)
+- planned support release tag: `v1.14.4-acp.1`
+- embedded sing-box configuration source tag: `v1.14.4`
+- upstream sing-box source commit: `c005f35300ce76427dc285481ec5695f5b179cd2`
+- node-agent compiler baseline: sing-box `v1.14.4`
+- sing-box-acp commit: `373f2e593d5a28326a98a6038356482d9ef0f6b9`
+- sing-quic upstream commit: `7e0a5869a5f4`
+- sing-quic version: `v0.7.2-0.20261020082049-7e0a5869a5f4`
 
 Current configuration compatibility target:
 
@@ -28,14 +28,12 @@ shared configuration compiler and pure `WebOptions` model/validation. The
 support module does not import `webcontent`, `webserver`, AnyTLS sessions or
 other protocol runtime packages. `compat/TestAnyTLSCompilationParity` compares
 fixed HTML/proxy configurations and rejected inputs against node-agent.
-The commit pins above identify the tested core/agent pair. Keep them aligned
-with the dependency SHAs in the panel and agent release workflows.
+The agent CI and release workflows pin the core and run the compiler parity suite.
 
 The embedded configuration-layer packages retain their original source
 provenance, import-path adaptation, GPLv3 license, and source notice under
-`internal/singbox`. This upgrade includes the three upstream option-model
-changes present in the embedded package set and the ACP fork's direct-action
-decoding fix. Development is consolidated on `main`; the historical
+`internal/singbox`. The compiler maps ACP direct route actions to named direct
+outbounds, preserving each rule's dialer options. Development is consolidated on `main`; the historical
 `v1.14.0-acp.1` tag remains available for rollback.
 
 The panel-facing compiler now follows the current node's default Hysteria2
