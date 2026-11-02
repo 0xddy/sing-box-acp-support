@@ -11,6 +11,8 @@ original package structure under an internal module path.
   `common/badversion`, `experimental/locale`, and
   `experimental/deprecated`
 
+Mieru outbound configuration mirrors the option types from ACP core commit `d4ea2a4446d6b0fc139a5a4864347c37c637106a`. Its protocol implementation is not part of the lightweight compiler.
+
 The imported configuration layer tracks the v1.14.4 option types.
 Imports referring to other sing-box packages were mechanically rewritten to
 the corresponding internal paths in this module.

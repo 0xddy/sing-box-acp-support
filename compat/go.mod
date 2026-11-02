@@ -14,6 +14,7 @@ require (
 	github.com/caddyserver/zerossl v0.1.5 // indirect
 	github.com/database64128/netx-go v0.1.1 // indirect
 	github.com/database64128/tfo-go/v2 v2.3.3 // indirect
+	github.com/enfein/mieru/v3 v3.39.0 // indirect
 	github.com/florianl/go-nfqueue/v2 v2.1.0 // indirect
 	github.com/fsnotify/fsnotify v1.10.1 // indirect
 	github.com/go-chi/chi/v5 v5.3.1 // indirect
@@ -24,9 +25,9 @@ require (
 	github.com/godbus/dbus/v5 v5.2.2 // indirect
 	github.com/gofrs/uuid/v5 v5.5.1 // indirect
 	github.com/google/btree v1.1.3 // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/google/gopacket v1.1.19 // indirect
+	github.com/google/uuid v1.6.0 // indirect
 	github.com/hashicorp/yamux v0.1.2 // indirect
 	github.com/huin/goupnp v1.3.0 // indirect
 	github.com/jackpal/go-nat-pmp v1.0.2 // indirect
@@ -89,6 +90,8 @@ replace github.com/0xddy/sing-box-acp-support => ..
 replace github.com/acp/node-agent => ../../node-agent/src
 
 replace github.com/sagernet/sing-box => ../../third_party/sing-box-acp
+
+replace github.com/enfein/mieru/v3 => ../../third_party/sing-box-acp/third_party/mieru-acp
 
 replace github.com/sagernet/sing-quic => ../../third_party/sing-box-acp/third_party/sing-quic-acp
 
