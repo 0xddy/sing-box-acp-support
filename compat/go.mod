@@ -90,3 +90,7 @@ replace github.com/acp/node-agent => ../../node-agent/src
 replace github.com/sagernet/sing-box => ../../third_party/sing-box-acp
 
 replace github.com/sagernet/sing-quic => ../../third_party/sing-box-acp/third_party/sing-quic-acp
+
+replace github.com/sagernet/sing-vmess => ../../third_party/sing-box-acp/third_party/sing-vmess-acp
+
+replace github.com/metacubex/utls => ../../third_party/sing-box-acp/third_party/utls-acp
