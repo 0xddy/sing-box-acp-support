@@ -11,9 +11,9 @@ Compatibility baselines:
 - planned support release tag: `v1.14.4-acp.1`
 - embedded sing-box configuration source tag: `v1.14.4`
 - upstream sing-box source commit: `c005f35300ce76427dc285481ec5695f5b179cd2`
-- node-agent commit: `19e8a76e9ba097c5d2aeecc3b887b955b3b12134`
+- node-agent commit: `e7df2fb5975ad4d59598f4bb19d803623510d03b`
 - node-agent compiler baseline: sing-box `v1.14.4`
-- sing-box-acp commit: `c01553ca9ecf7ea2fe29911c351aedbcb73dd36b`
+- sing-box-acp commit: `adec7188bf06cdb53e9877d104df3631f8a2a3f4`
 - sing-quic upstream commit: `7e0a5869a5f4`
 - sing-quic version: `v0.7.2-0.20261020082049-7e0a5869a5f4`
 
@@ -22,7 +22,12 @@ Current configuration compatibility target:
 - minimum Go version: `1.25.5`
 - node-agent API module: `github.com/acp/node-agent`
 - supported outbound types, in order: `direct`, `selector`, `urltest`,
-  `shadowsocks`, `trojan`, `vless`, `hysteria2`
+  `shadowsocks`, `trojan`, `vless`, `hysteria2`, `juicity`
+
+`juicity@1` uses the same provider config and credential mapping as the
+agent through `node-agent/api/provider`. The lightweight outbound validator
+uses mirrored Juicity options. The compatibility suite checks snapshots and
+outbound options against the embedded runtime's compiler.
 
 The AnyTLS integration adds the inbound provider `anytls-tls@1`, its
 shared configuration compiler and pure `WebOptions` model/validation. The

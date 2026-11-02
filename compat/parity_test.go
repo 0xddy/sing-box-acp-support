@@ -46,6 +46,7 @@ func TestValidateOutboundParity(t *testing.T) {
 		{name: "trojan", outbound: outbound("trojan", "trojan", `{"server":"127.0.0.1","server_port":443,"password":"secret"}`)},
 		{name: "vless", outbound: outbound("vless", "vless", `{"server":"127.0.0.1","server_port":443,"uuid":"11111111-1111-4111-8111-111111111111"}`)},
 		{name: "hysteria2", outbound: outbound("hysteria2", "hy2", `{"server":"127.0.0.1","server_port":443,"password":"secret","tls":{"enabled":true,"server_name":"example.com","insecure":true}}`)},
+		{name: "juicity", outbound: outbound("juicity", "juicity-out", `{"server":"127.0.0.1","server_port":443,"uuid":"11111111-1111-4111-8111-111111111111","password":"secret","tls":{"enabled":true},"udp_mode":"underlay"}`)},
 		{name: "unknown type", outbound: outbound("unknown", "unknown", `{}`)},
 		{name: "unknown option", outbound: outbound("direct", "bad-direct", `{"unknown":true}`)},
 		{name: "managed type", outbound: outbound("direct", "bad-direct", `{"type":"direct"}`)},

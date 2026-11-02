@@ -39,7 +39,7 @@ func NewRegistry(adapters ...Adapter) *Registry {
 }
 
 func DefaultRegistry() *Registry {
-	return NewRegistry(vlessRealityVisionAdapter{}, hysteria2SalamanderAdapter{}, anytlsTLSAdapter{})
+	return NewRegistry(vlessRealityVisionAdapter{}, hysteria2SalamanderAdapter{}, anytlsTLSAdapter{}, juicityAdapter{})
 }
 
 func (r *Registry) Build(node topology.NodeInstance, users []topology.UserCredential) (BuildResult, error) {

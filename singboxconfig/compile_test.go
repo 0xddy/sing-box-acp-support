@@ -124,7 +124,7 @@ func TestValidateOutboundRejectsNestedUnknownFieldsAndInvalidDurations(t *testin
 func TestValidateOutboundLeavesRuntimeRequiredValuesToNode(t *testing.T) {
 	// This package mirrors sing-box option decoding. Constructor/start-time
 	// required-value checks remain a node runtime concern.
-	for _, outboundType := range []string{"selector", "urltest", "shadowsocks", "trojan", "vless", "hysteria2"} {
+	for _, outboundType := range []string{"selector", "urltest", "shadowsocks", "trojan", "vless", "hysteria2", "juicity"} {
 		if err := ValidateOutbound(&acpv1.OutboundConfig{
 			Type: outboundType, Tag: "zero-value-" + outboundType, OptionsJson: []byte(`{}`),
 		}); err != nil {
@@ -134,7 +134,7 @@ func TestValidateOutboundLeavesRuntimeRequiredValuesToNode(t *testing.T) {
 }
 
 func TestSupportedOutboundTypesUsePinnedOptionTypes(t *testing.T) {
-	want := []string{"direct", "selector", "urltest", "shadowsocks", "trojan", "vless", "hysteria2"}
+	want := []string{"direct", "selector", "urltest", "shadowsocks", "trojan", "vless", "hysteria2", "juicity"}
 	got := SupportedOutboundTypes()
 	if len(got) != len(want) {
 		t.Fatalf("supported type count = %d, want %d", len(got), len(want))
@@ -240,6 +240,8 @@ func minimalOutboundOptions(outboundType string) []byte {
 		return []byte(`{"server":"127.0.0.1","server_port":443,"uuid":"11111111-1111-4111-8111-111111111111"}`)
 	case "hysteria2":
 		return []byte(`{"server":"127.0.0.1","server_port":443,"password":"secret"}`)
+	case "juicity":
+		return []byte(`{"server":"127.0.0.1","server_port":443,"uuid":"11111111-1111-4111-8111-111111111111","password":"secret","tls":{"enabled":true}}`)
 	default:
 		return []byte(`{}`)
 	}

@@ -27,6 +27,7 @@ var registrations = []registration{
 	{outboundType: C.TypeTrojan, create: func() any { return new(option.TrojanOutboundOptions) }},
 	{outboundType: C.TypeVLESS, create: func() any { return new(option.VLESSOutboundOptions) }},
 	{outboundType: C.TypeHysteria2, create: func() any { return new(option.Hysteria2OutboundOptions) }},
+	{outboundType: C.TypeJuicity, create: func() any { return new(option.JuicityOutboundOptions) }},
 }
 
 type optionsRegistry struct {

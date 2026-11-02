@@ -30,3 +30,6 @@ The original license is preserved in [LICENSE](LICENSE).
 The XHTTP transport options in `option/v2ray_xhttp.go` and its transport
 discriminator are mirrored from ACP core `c01553ca9`. The adapted option
 types are covered by the accompanying MPL-2.0 notice and license.
+
+Juicity's option types and protocol discriminator are mirrored from ACP core
+`59aa816bf56670f5658c8b2bdc6299bab1eed3f4`.
