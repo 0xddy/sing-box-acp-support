@@ -106,14 +106,26 @@ func (vlessRealityVisionAdapter) Build(node topology.NodeInstance, users []topol
 	if listen == "" {
 		listen = topology.DefaultInboundListen
 	}
+	transport, err := vlessTransport(cfg.Transport)
+	if err != nil {
+		return BuildResult{}, fmt.Errorf("node %s vless transport: %w", node.NodeID, err)
+	}
+	flow := cfg.Flow
+	if transport != nil {
+		if flow != "" && flow != topology.VLESSFlowRealityVision {
+			return BuildResult{}, fmt.Errorf("node %s xhttp: unsupported VLESS flow %q", node.NodeID, flow)
+		}
+		// Existing provider configs carry the raw Vision flow. XHTTP users use plain VLESS.
+		flow = ""
+	}
 	compiledUsers := make([]map[string]any, 0, len(users))
 	for _, user := range users {
 		if user.Credential == "" {
 			return BuildResult{}, fmt.Errorf("node %s user %s credential is required", node.NodeID, user.UserID)
 		}
 		entry := map[string]any{"name": userName(user), "uuid": user.Credential}
-		if cfg.Flow != "" {
-			entry["flow"] = cfg.Flow
+		if flow != "" {
+			entry["flow"] = flow
 		}
 		compiledUsers = append(compiledUsers, entry)
 	}
@@ -133,6 +145,9 @@ func (vlessRealityVisionAdapter) Build(node topology.NodeInstance, users []topol
 				"short_id":    append([]string(nil), cfg.TLS.Reality.ShortID...),
 			},
 		},
+	}
+	if transport != nil {
+		inbound["transport"] = transport
 	}
 	if cfg.TCPFastOpen {
 		inbound["tcp_fast_open"] = true

@@ -115,6 +115,10 @@ func TestVLESSRealityProviderSafetyParity(t *testing.T) {
 		mutate func(*sharedprovider.VLESSRealityVisionConfig)
 	}{
 		{"valid", func(*sharedprovider.VLESSRealityVisionConfig) {}},
+		{"valid XHTTP", func(c *sharedprovider.VLESSRealityVisionConfig) {
+			c.Transport = []byte(`{"type":"xhttp","mode":"stream-up"}`)
+			c.Flow = "xtls-rprx-vision"
+		}},
 		{"TLS disabled", func(c *sharedprovider.VLESSRealityVisionConfig) { c.TLS.Enabled = false }},
 		{"REALITY disabled", func(c *sharedprovider.VLESSRealityVisionConfig) { c.TLS.Reality.Enabled = false }},
 		{"missing handshake host", func(c *sharedprovider.VLESSRealityVisionConfig) { c.TLS.Reality.Handshake.Server = "" }},
@@ -138,7 +142,7 @@ func TestVLESSRealityProviderSafetyParity(t *testing.T) {
 			}}}
 			compareCompiledSnapshot(t, snapshot)
 			_, err := support.CompileSnapshot(snapshot)
-			if (err == nil) != (tc.name == "valid") {
+			if (err == nil) != (tc.name == "valid" || tc.name == "valid XHTTP") {
 				t.Fatalf("REALITY safety acceptance mismatch: %v", err)
 			}
 		})

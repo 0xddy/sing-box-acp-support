@@ -26,3 +26,7 @@ One behavior-neutral lint-only adjustment wraps the deferred
 error result.
 
 The original license is preserved in [LICENSE](LICENSE).
+
+The XHTTP transport options in `option/v2ray_xhttp.go` and its transport
+discriminator are mirrored from ACP core `c01553ca9`. The adapted option
+types are covered by the accompanying MPL-2.0 notice and license.
