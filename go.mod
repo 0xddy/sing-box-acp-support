@@ -13,6 +13,7 @@ require (
 )
 
 require (
+	github.com/enfein/mieru/v3 v3.39.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	golang.org/x/net v0.57.0 // indirect
 	golang.org/x/sync v0.22.0 // indirect

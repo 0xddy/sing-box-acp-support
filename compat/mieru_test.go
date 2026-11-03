@@ -27,4 +27,10 @@ func TestMieruCompilationParity(t *testing.T) {
 			}
 		})
 	}
+	node.Users = nil
+	node.ProviderConfigJson = []byte(`{"type":"mieru","listen_port":2027,"traffic_pattern":"CA=="}`)
+	compareCompiledSnapshot(t, snapshot)
+	if _, err := support.CompileSnapshot(snapshot); err == nil {
+		t.Fatal("support accepted an invalid Mieru profile")
+	}
 }
