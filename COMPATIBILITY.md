@@ -11,9 +11,9 @@ Compatibility baselines:
 - planned support release tag: `v1.14.4-acp.1`
 - embedded sing-box configuration source tag: `v1.14.4`
 - upstream sing-box source commit: `c005f35300ce76427dc285481ec5695f5b179cd2`
-- node-agent commit: `e644858b9d4fa53312fd70b1f7e48c0bb363cf10`
+- node-agent commit: `7cb9ea7408d1257e32d9a1208cb055c2289911f0`
 - node-agent compiler baseline: sing-box `v1.14.4`
-- sing-box-acp commit: `d00d7096e9ce8bab6ed70a8d46ce9e52367ec2cb`
+- sing-box-acp commit: `a38b6fb3df6cb6ec7cb650e0210c02d47f02e168`
 - sing-quic upstream commit: `7e0a5869a5f4`
 - sing-quic version: `v0.7.2-0.20261020082049-7e0a5869a5f4`
 
@@ -24,7 +24,7 @@ Current configuration compatibility target:
 - supported outbound types, in order: `direct`, `selector`, `urltest`,
   `shadowsocks`, `trojan`, `vless`, `hysteria2`, `juicity`, `mieru`
 
-`mieru@1` shares its listener and user mapping with the agent through `node-agent/api/provider`. Traffic patterns are decoded and validated by the official v3.39.0 configuration API. The support compiler mirrors the Mieru outbound option types.
+`mieru@1` shares its listener and user mapping with the agent through `node-agent/api/provider`. Traffic patterns are decoded and validated by the official v3.39.0 configuration API. The panel and agent compilers also validate the Mieru outbound profile and Juicity credentials, trust settings and transport modes with the same configuration code as the respective kernel constructors.
 
 `juicity@1` uses the same provider config and credential mapping as the
 agent through `node-agent/api/provider`. The lightweight outbound validator

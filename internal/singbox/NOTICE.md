@@ -11,7 +11,7 @@ original package structure under an internal module path.
   `common/badversion`, `experimental/locale`, and
   `experimental/deprecated`
 
-Mieru outbound configuration mirrors the option types from ACP core commit `d4ea2a4446d6b0fc139a5a4864347c37c637106a`. Its protocol implementation is not part of the lightweight compiler.
+Mieru and Juicity outbound configuration and static validation mirror ACP core commit `a38b6fb3df6cb6ec7cb650e0210c02d47f02e168`. The support compiler imports only configuration dependencies for these protocols.
 
 The imported configuration layer tracks the v1.14.4 option types.
 Imports referring to other sing-box packages were mechanically rewritten to

@@ -4,6 +4,8 @@ go 1.25.5
 
 require (
 	github.com/acp/node-agent v0.0.0
+	github.com/enfein/mieru/v3 v3.39.0
+	github.com/gofrs/uuid/v5 v5.5.1
 	github.com/miekg/dns v1.1.72
 	github.com/sagernet/sing v0.9.7-0.20261023115459-5dc452e537bf
 	go4.org/netipx v0.0.0-20231129151722-fdeea329fbba
@@ -13,7 +15,6 @@ require (
 )
 
 require (
-	github.com/enfein/mieru/v3 v3.39.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	golang.org/x/net v0.57.0 // indirect
 	golang.org/x/sync v0.22.0 // indirect

@@ -68,8 +68,11 @@ func validationContext() context.Context {
 // Validate decodes a complete sing-box outbound object with the option types
 // selected by this support module.
 func Validate(encoded []byte) error {
-	_, err := singjson.UnmarshalExtendedContext[option.Outbound](validationContext(), encoded)
-	return err
+	outbound, err := singjson.UnmarshalExtendedContext[option.Outbound](validationContext(), encoded)
+	if err != nil {
+		return err
+	}
+	return outbound.Validate()
 }
 
 // SupportedTypes returns a copy of the ordered supported type list.

@@ -121,10 +121,9 @@ func TestValidateOutboundRejectsNestedUnknownFieldsAndInvalidDurations(t *testin
 	}
 }
 
-func TestValidateOutboundLeavesRuntimeRequiredValuesToNode(t *testing.T) {
-	// This package mirrors sing-box option decoding. Constructor/start-time
-	// required-value checks remain a node runtime concern.
-	for _, outboundType := range []string{"selector", "urltest", "shadowsocks", "trojan", "vless", "hysteria2", "juicity", "mieru"} {
+func TestValidateOutboundLeavesOtherProtocolsRuntimeChecksToNode(t *testing.T) {
+	// Protocols without configuration-layer checks still use schema-only validation.
+	for _, outboundType := range []string{"selector", "urltest", "shadowsocks", "trojan", "vless", "hysteria2"} {
 		if err := ValidateOutbound(&acpv1.OutboundConfig{
 			Type: outboundType, Tag: "zero-value-" + outboundType, OptionsJson: []byte(`{}`),
 		}); err != nil {
