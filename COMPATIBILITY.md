@@ -13,7 +13,7 @@ Compatibility baselines:
 - upstream sing-box source commit: `c005f35300ce76427dc285481ec5695f5b179cd2`
 - node-agent commit: `7cb9ea7408d1257e32d9a1208cb055c2289911f0`
 - node-agent compiler baseline: sing-box `v1.14.4`
-- sing-box-acp commit: `a38b6fb3df6cb6ec7cb650e0210c02d47f02e168`
+- sing-box-acp commit: `a5987226a17b81a8b07417f4fb2d8315db1801fa`
 - sing-quic upstream commit: `7e0a5869a5f4`
 - sing-quic version: `v0.7.2-0.20261020082049-7e0a5869a5f4`
 
@@ -30,6 +30,13 @@ Current configuration compatibility target:
 agent through `node-agent/api/provider`. The lightweight outbound validator
 uses mirrored Juicity options. The compatibility suite checks snapshots and
 outbound options against the embedded runtime's compiler.
+
+`naive-tls@1` uses the shared Naive compiler and registers the panel preview
+provider without importing protocol constructors. `compat/naive_test.go`
+compares listener, user, certificate and invalid-input behavior with the agent.
+UoT v2 remains a fixed client-outbound requirement; it adds no provider option,
+database column or listener identity field. The pinned core accepts the UoT v2
+CONNECT authority and routes decoded datagrams using their actual destination.
 
 The AnyTLS integration adds the inbound provider `anytls-tls@1`, its
 shared configuration compiler and pure `WebOptions` model/validation. The
