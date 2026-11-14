@@ -1,6 +1,6 @@
 module github.com/0xddy/sing-box-acp-support/compat
 
-go 1.25.5
+go 1.26.10
 
 require (
 	github.com/0xddy/sing-box-acp-support v1.14.4-acp.1

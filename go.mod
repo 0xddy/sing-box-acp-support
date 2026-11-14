@@ -1,6 +1,6 @@
 module github.com/0xddy/sing-box-acp-support
 
-go 1.25.5
+go 1.26.10
 
 require (
 	github.com/acp/node-agent v0.0.0
